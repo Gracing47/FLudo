@@ -27,21 +27,23 @@ export default function LudoGame() {
       
       if (movablePieces.length === 0) {
         setMessage(`No valid moves for ${currentPlayer.name}. Next player's turn.`);
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           setGameState(nextTurn(gameState));
           setSelectablePieceIds(new Set());
         }, 2000);
+        return () => clearTimeout(timer);
       } else if (movablePieces.length === 1) {
         // Auto-move if only one piece can move
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           handlePieceClick(movablePieces[0].id);
         }, 500);
+        return () => clearTimeout(timer);
       } else {
         setSelectablePieceIds(new Set(movablePieces.map(p => p.id)));
         setMessage(`${currentPlayer.name}: Select a piece to move.`);
       }
     }
-  }, [gameState.diceValue]);
+  }, [gameState.diceValue, gameState.players, gameState.currentPlayerIndex]);
 
   const handleStartGame = () => {
     const newState = { ...gameState, gameStarted: true };
@@ -89,9 +91,10 @@ export default function LudoGame() {
     setSelectablePieceIds(new Set());
     
     if (!newState.canRollAgain && newState.winner === null) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setGameState(nextTurn(newState));
       }, 1000);
+      return () => clearTimeout(timer);
     }
   };
 

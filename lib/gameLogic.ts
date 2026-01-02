@@ -81,7 +81,15 @@ export function movePiece(
   pieceId: string,
   diceValue: number
 ): GameState {
-  const newState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  // Create a proper deep copy of the game state
+  const newState: GameState = {
+    ...gameState,
+    players: gameState.players.map(player => ({
+      ...player,
+      pieces: player.pieces.map(piece => ({ ...piece }))
+    }))
+  };
+  
   const currentPlayer = newState.players[newState.currentPlayerIndex];
   const piece = currentPlayer.pieces.find(p => p.id === pieceId);
 

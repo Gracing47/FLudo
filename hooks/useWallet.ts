@@ -55,7 +55,8 @@ export function useWallet() {
       };
 
       const handleChainChanged = () => {
-        window.location.reload();
+        // Refresh wallet state without full page reload
+        connect();
       };
 
       window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -65,6 +66,10 @@ export function useWallet() {
         if (window.ethereum.removeListener) {
           window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
           window.ethereum.removeListener('chainChanged', handleChainChanged);
+        } else {
+          // Modern approach for newer providers
+          window.ethereum.off?.('accountsChanged', handleAccountsChanged);
+          window.ethereum.off?.('chainChanged', handleChainChanged);
         }
       };
     }
